@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Elementos de la solución/">
+    <File Path="render.yaml" />
+  </Folder>
   <Project Path="SistemaVenta.AplicacionWeb/SistemaVenta.AplicacionWeb.csproj" />
   <Project Path="SistemaVenta.BLL/SistemaVenta.BLL.csproj" />
   <Project Path="SistemaVenta.DAL/SistemaVenta.DAL.csproj" />
