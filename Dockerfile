@@ -1,11 +1,12 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+# Copiamos los archivos de proyectos individuales para restaurar dependencias
 COPY ["SistemaVenta.AplicacionWeb/SistemaVenta.AplicacionWeb.csproj", "SistemaVenta.AplicacionWeb/"]
 COPY ["SistemaVenta.BLL/SistemaVenta.BLL.csproj", "SistemaVenta.BLL/"]
 COPY ["SistemaVenta.DAL/SistemaVenta.DAL.csproj", "SistemaVenta.DAL/"]
