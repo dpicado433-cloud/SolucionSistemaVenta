@@ -1,5 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using SistemaVenta.AplicacionWeb.Utilidades.AutoMapper;
-
+using SistemaVenta.DAL.DBContext;
 using SistemaVenta.IOC;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.inyectarDependencia(builder.Configuration);
 builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfile));
+
+builder.Services.AddDbContext<DbventaContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CadenaSQL"))
+);
 
 var app = builder.Build();
 

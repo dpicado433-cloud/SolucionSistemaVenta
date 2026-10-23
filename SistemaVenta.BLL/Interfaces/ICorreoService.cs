@@ -9,6 +9,7 @@ namespace SistemaVenta.BLL.Interfaces
     public interface ICorreoService
     {
         Task<bool> EnviarCorreo(string CorreoDestino, string Asunto, string Mensaje);
-
+        Task<bool> EnviarCorreo(string email, string passwordTemporal);
+        Task<bool> EnviarCorreoRestauracion(string email, string passwordTemporal);
     }
 }

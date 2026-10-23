@@ -44,63 +44,32 @@ namespace SistemaVenta.BLL.Implementacion
             if (usuario_existe != null)
                 throw new TaskCanceledException("El correo ya existe");
 
-
             try
             {
-
                 string clave_generada = _UtilidadesService.GenerarClave();
                 entidad.Clave = _UtilidadesService.ConvertirSha256(clave_generada);
                 entidad.NombreFoto = NombreFoto;
 
-                if (Foto  != null) {
+                if (Foto != null)
+                {
                     string UrlFoto = await _AppWriteService.SubirStorage(Foto, "carpeta_usuario", NombreFoto);
                     entidad.UrlFoto = UrlFoto;
                 }
+
                 Usuario usuario_creado = await _repositorio.Crear(entidad);
 
                 if (usuario_creado.IdUsuario == 0)
-                    throw new TaskCanceledException("No se pudo crear el usurio");
+                    throw new TaskCanceledException("No se pudo crear el usuario");
 
-                if (!string.IsNullOrEmpty(UrlPlantillaCorreo))
-                {
-                    UrlPlantillaCorreo = UrlPlantillaCorreo.Replace("[correo]", usuario_creado.Correo)
-                                                           .Replace("[clave]", clave_generada);
-                
-                string htmlCorreo = "";
-
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UrlPlantillaCorreo);
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                    if (response.StatusCode == HttpStatusCode.OK) {
-                        using (Stream dataStream = response.GetResponseStream()) {
-                            StreamReader readerStream = null;
-
-                            if (response.CharacterSet == null)
-                                readerStream = new StreamReader(dataStream);
-                            else
-                                readerStream = new StreamReader(dataStream, Encoding.GetEncoding(response.CharacterSet));
-
-                            htmlCorreo = readerStream.ReadToEnd();
-                            response.Close();
-                            readerStream.Close();
-
-
-
-                        }
-                    }
-
-
-                    if (htmlCorreo != "")
-                        await _correoService.EnviarCorreo(usuario_creado.Correo, "Cuenta Creada", htmlCorreo);
-                }
+                await _AppWriteService.CrearUsuarioAppwrite(usuario_creado.Correo, clave_generada, usuario_creado.Nombre);
 
                 IQueryable<Usuario> query = await _repositorio.Consultar(u => u.IdUsuario == usuario_creado.IdUsuario);
                 usuario_creado = query.Include(r => r.IdRolNavigation).First();
 
                 return usuario_creado;
-
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 throw;
             }
         }
@@ -229,6 +198,13 @@ namespace SistemaVenta.BLL.Implementacion
             {
                 throw;
             }
+        }
+        public async Task<bool> RegistrarUsuarioYNotificar(string email, string passwordTemporal)
+        {
+           CorreoService correoService = new CorreoService();
+           bool correoEnviado = await _correoService.EnviarCorreoRestauracion(email, passwordTemporal);
+
+           return correoEnviado;
         }
 
         public async Task<bool> RestablecerContraseña(string Correo, string UrlPlantillaCorreo)

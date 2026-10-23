@@ -15,6 +15,6 @@ namespace SistemaVenta.BLL.Interfaces
         Task<string> EliminarStorage(string CarpetaDestino, string NombreArchivo);
 
         Task<bool> CrearUsuarioAppwrite(string correo, string password, string nombre);
-
+        Task ActualizarPasswordAppwrite(string userId, string nuevaPassword);
     }
 }
